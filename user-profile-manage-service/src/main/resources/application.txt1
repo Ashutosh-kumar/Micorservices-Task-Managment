@@ -1,0 +1,21 @@
+server:
+    port: 8082
+    
+spring:
+  application: 
+          name: user-profile-service
+eureka: 
+    client:
+      service-url:
+           defaultZone: http://localhost:8765/eureka
+
+
+security:
+  oauth2:
+    resource:
+      token-info-uri: http://localhost:8282/oauth/check_token
+
+
+    client: 
+      client-id:  mobile  
+      client-secret: pin 
