@@ -73,14 +73,16 @@ public class UserProfileRestApi {
 	
 	@RequestMapping(value = "/deleteuserbyid", method = RequestMethod.DELETE)
 	@PreAuthorize( "hasAnyAuthority('profile_editor','profile_reader')") 
-	public void delete(HttpServletRequest request,@RequestParam Integer userId) {
+	public String delete(HttpServletRequest request,@RequestParam Integer userId) {
 		LOG.info("calling deleteuserbyid");
 		String username = request.getHeader("loginuserShortId");
 		boolean updateFlag= userProfileService.isUserUpdatingOwnProfile(username);
 		if (updateFlag) {
 			userProfileService.deleteByUserId(userId);
+			return "User Deleted.";
 		}else {
 			LOG.error("Not able to delete , user cannot delete other profile");
+			return "Not able to delete , user cannot delete other profile";
 		}
 	}
 	
