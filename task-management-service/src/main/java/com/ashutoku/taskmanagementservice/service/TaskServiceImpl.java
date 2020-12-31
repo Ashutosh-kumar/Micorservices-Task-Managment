@@ -253,7 +253,7 @@ public class TaskServiceImpl implements ITaskService {
 			task.setCreatedby(userlogin);
 			task.setAssignedTo(userlogin);
 			taskDto.setUpdatedby(userlogin);
-			taskDto.setStatus(TaskStatus.TO_DO.toString());
+			task.setStatus(TaskStatus.TO_DO.toString());
 			task = convertToEntity(taskDto, task);
 			TaskDetail taskdetail = taskRepository.save(task);
 			sendEmailNotificationToUser(userandrole.getUserEmail(),
