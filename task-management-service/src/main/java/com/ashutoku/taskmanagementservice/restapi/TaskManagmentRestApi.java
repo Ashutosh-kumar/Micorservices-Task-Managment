@@ -137,10 +137,10 @@ public class TaskManagmentRestApi {
 	
 	
 	@RequestMapping(value = "/deletetaskbyid", method = RequestMethod.DELETE)
-	public void delete(HttpServletRequest request,@RequestParam Integer taskId) {
+	public ResponseEntity<Object>  delete(HttpServletRequest request,@RequestParam Integer taskId) {
 		LOG.info(" rest service call /updatetask...");
 		String loginuser = request.getHeader("loginuserShortId");
-		taskServiceImpl.deleteByTaskId(taskId,loginuser);
+		return taskServiceImpl.deleteByTaskId(taskId,loginuser);
 	}
 
 //	@RequestMapping(value = "/gettaskbyid", method = RequestMethod.GET)
