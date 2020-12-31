@@ -286,7 +286,7 @@ public class TaskServiceImpl implements ITaskService {
 				sendEmailNotificationToUser(userandrole.getUserEmail(),
 						"Task Detail Updated:"+taskDetailDb.getTaskId(), "Task Deleted.");
 				
-				return new ResponseEntity<Object>(true, new HttpHeaders(), HttpStatus.OK);
+				return new ResponseEntity<Object>("Task Deleted", new HttpHeaders(), HttpStatus.OK);
 			}else {
 				String msg = "User Not Authorised to  add request for task";
 				LOG.info(msg);
@@ -314,11 +314,13 @@ public class TaskServiceImpl implements ITaskService {
 			return returnInvalidUserResponse(loginuser);
 		}
 		
-		if (loginuser.equalsIgnoreCase(assignedTo) && "ROLE_USER".equalsIgnoreCase(userandrole.getRole().getName())) {
+		
 			Optional<TaskDetail> taskDetail = taskRepository.findById(taskId);
 			if (taskDetail.isPresent()) {
 				TaskDetail taskDetailsTosave  = taskDetail.get();
 				taskDetailsTosave.setAssignedTo(assignedTo);
+				taskDetailsTosave.setUpdatedby(loginuser);
+				taskDetailsTosave.setUpdatedDateTime(LocalDateTime.now());
 				TaskDetail taskdetailPostSave = taskRepository.save(taskDetailsTosave);
 				sendEmailNotificationToUser(userandrole.getUserEmail(),
 						"Task Detail Updated:"+taskdetailPostSave.getTaskId(), "Task assignee has changed.");
@@ -331,12 +333,6 @@ public class TaskServiceImpl implements ITaskService {
 				return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
 
 			}
-		} else {
-			String msg = "Task for self can be searched only:" + loginuser;
-			LOG.info(msg);
-			ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, msg, "error occurred");
-			return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
-		}
 		
 	}
 
