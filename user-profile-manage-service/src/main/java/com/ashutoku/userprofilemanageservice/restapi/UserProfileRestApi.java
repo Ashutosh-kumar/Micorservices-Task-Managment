@@ -34,7 +34,7 @@ public class UserProfileRestApi {
 	public List<UserProfileDetail>  getUserAllProfile(HttpServletRequest request){
 		LOG.info("calling getalluserprofile");
 		List<UserProfileDetail>  userlist = userProfileService.fetchAllUserProfiles();
-		System.out.println("in getUserProfileRole");
+		LOG.info("in getUserProfileRole");
 		return userlist;
 	}
 	
@@ -48,7 +48,6 @@ public class UserProfileRestApi {
 	
 
 	@RequestMapping("/adduserprofile")
-	@PreAuthorize( "hasAuthority('profile_editor')") 
 	public UserProfileDetail  addNewUserProfile(@RequestBody UserProfileDTO userProfileDto){
 		LOG.info("calling adduserprofile");
 		UserProfileDetail userDetail = userProfileService.add(userProfileDto);
@@ -59,10 +58,10 @@ public class UserProfileRestApi {
 	@PreAuthorize( "hasAuthority('profile_editor')") 
 	public UserProfileDetail  updateUserProfile(HttpServletRequest request,@RequestBody UserProfileDTO userProfileDto){
 		LOG.info("calling updateUserProfile");
-		String username = request.getHeader("username");
-		boolean updateFlag= userProfileService.isUserUpdatingOwnProfile(username);
+		String loginuser = request.getHeader("loginuserShortId");
+		boolean updateFlag= userProfileService.isUserUpdatingOwnProfile(loginuser);
 		if (updateFlag) {
-			userProfileDto.setUserShortId(username);
+			userProfileDto.setUserShortId(loginuser);
 			UserProfileDetail userDetail = userProfileService.save(userProfileDto);
 			return userDetail;
 		}else {
@@ -73,14 +72,13 @@ public class UserProfileRestApi {
 	}
 	
 	@RequestMapping(value = "/deleteuserbyid", method = RequestMethod.DELETE)
-	@PreAuthorize( "hasAuthority('profile_editor')") 
-	public void delete(HttpServletRequest request,@RequestParam String userName) {
+	@PreAuthorize( "hasAnyAuthority('profile_editor','profile_reader')") 
+	public void delete(HttpServletRequest request,@RequestParam Integer userId) {
 		LOG.info("calling deleteuserbyid");
-		String username = request.getHeader("username");
+		String username = request.getHeader("loginuserShortId");
 		boolean updateFlag= userProfileService.isUserUpdatingOwnProfile(username);
 		if (updateFlag) {
-			UserProfileDetail user = userProfileService.fetchByShortId(username);
-			userProfileService.deleteByUserId(new Integer(user.getUserId()));
+			userProfileService.deleteByUserId(userId);
 		}else {
 			LOG.error("Not able to delete , user cannot delete other profile");
 		}
