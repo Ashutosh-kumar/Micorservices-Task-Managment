@@ -29,11 +29,20 @@ public class UserProfileImpService implements IUserProfileService {
 
 
 	@Override
-	public UserProfileDetail save(UserProfileDTO userProfile) {
-		UserProfileDetail userProfileDetail = userProfileRepository.findUserByShortId(userProfile.getUserShortId());
+	public UserProfileDetail save(UserProfileDTO userProfileDto) {
+		UserProfileDetail userProfileDetail = userProfileRepository.findUserByShortId(userProfileDto.getUserShortId());
 		if (userProfileDetail != null) {
 			UserProfileDetail userProfileDetailtoSave = null;
-			userProfileDetailtoSave = convertToEntity(userProfile, userProfileDetail);
+			userProfileDetail.setUpdatedBy(userProfileDto.getUserShortId());
+			if (userProfileDto.getRoleId()!=null) {
+				Optional<Role> role = roleRepository.findById(userProfileDto.getRoleId());
+				if (role.get()!= null)
+				userProfileDetail.setRoleId(userProfileDto.getRoleId());
+			}else {
+				LOG.error("User Role not present");
+				return null;
+			}
+			userProfileDetailtoSave = convertToEntity(userProfileDto, userProfileDetail);
 			return userProfileRepository.save(userProfileDetailtoSave);
 		} else {
 			LOG.error("User Profile not present");
@@ -47,10 +56,12 @@ public class UserProfileImpService implements IUserProfileService {
 
 		UserProfileDetail user = new UserProfileDetail();
 		user.setCreatedDateTime(LocalDateTime.now());
-		user.setCreatedBy(userProfileDto.getCreatedBy());
+		user.setCreatedBy(userProfileDto.getUserShortId());
+		user.setUpdatedBy(userProfileDto.getUserShortId());
 		user.setUserEmail(userProfileDto.getUserEmail());
 		user.setUserShortId(userProfileDto.getUserShortId());
 		user.setCreatedDateTime(LocalDateTime.now());
+		user.setRoleId(userProfileDto.getRoleId());
 		user = convertToEntity(userProfileDto, user);
 		sendEmailNotificationToUser(user.getUserEmail(),"New User Registered","Welcome! You are registered to use the application");
 		return userProfileRepository.save(user);
@@ -60,8 +71,6 @@ public class UserProfileImpService implements IUserProfileService {
 		userProfileDetail.setUserLastName(userProfileDto.getUserLastName());
 		userProfileDetail.setUserFirstName(userProfileDto.getUserFirstName());
 		userProfileDetail.setUserEmail(userProfileDto.getUserEmail());
-		userProfileDetail.setCreatedBy(userProfileDto.getCreatedBy());
-		userProfileDetail.setUpdatedBy(userProfileDto.getUpdatedBy());
 		userProfileDetail.setUpdatedDateTime(LocalDateTime.now());
 		return userProfileDetail;
 	}
