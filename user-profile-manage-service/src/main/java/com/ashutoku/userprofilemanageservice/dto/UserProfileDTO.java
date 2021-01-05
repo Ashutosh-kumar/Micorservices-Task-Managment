@@ -26,6 +26,7 @@ public class UserProfileDTO implements Serializable {
 	private LocalDateTime createdDateTime;
 	@JsonFormat(pattern = "YYYY-MM-dd HH:mm:ss")
 	private LocalDateTime updatedDateTime;
+	private Integer roleId;
 	
 	private Role role;
 
@@ -117,6 +118,14 @@ public class UserProfileDTO implements Serializable {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+	
+	public Integer getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
 	}
 
 }
