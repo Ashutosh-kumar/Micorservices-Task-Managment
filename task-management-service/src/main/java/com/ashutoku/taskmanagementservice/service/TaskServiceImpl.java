@@ -178,7 +178,8 @@ public class TaskServiceImpl implements ITaskService {
 		Optional<TaskDetail> taskDetail = taskRepository.findById(taskId);
 		if (taskDetail.isPresent()) {
 			TaskDetail taskDetailFromDb = taskDetail.get();
-			if (userlogin.equalsIgnoreCase(taskDetailFromDb.getAssignedTo()) && "ROLE_USER".equalsIgnoreCase(userandrole.getRole().getName())) {
+			if (userlogin.equalsIgnoreCase(taskDetailFromDb.getAssignedTo()) && ("ROLE_USER".equalsIgnoreCase(userandrole.getRole().getName())
+					|| "ROLE_ADMIN".equalsIgnoreCase(userandrole.getRole().getName()))) {
 				return new ResponseEntity<Object>(taskDetailFromDb, new HttpHeaders(), HttpStatus.OK);
 			} else {
 				String msg = "Task not belong to user:" + userlogin;
