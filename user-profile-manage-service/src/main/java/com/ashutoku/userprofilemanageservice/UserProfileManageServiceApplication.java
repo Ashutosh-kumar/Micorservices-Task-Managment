@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class UserProfileManageServiceApplication {
